@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+    <script src="/bower_components/platform/platform.js"></script>
+  <link
+    rel="import"
+    href="/bower_components/leaflet-map-component/leaflet-map-component.html">
+  <style>
+    #mainmap {height:100%; width:100%}
+    h1 {color:red;}
+    p {color:blue;}
+    html,body{
+      height:100%;
+    }
+  </style>
+</head>
+<body>
+<div class="container-fluid" style="height: 100%">
+<div class="row">
+<div class="col-md-12">
+<p>Check console.log output</p>
+</div>
+</div>
+<div class="row"  style="height: 100%">
+<div class="col-md-12"  style="height: 100%">
+ <leaflet-map
+    id="mainmap"
+    longitude="-122.300293725"
+    latitude="37.864465362"
+    zoom="14"
+    tileserver="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+  >
+    <leaflet-circle id="boatmarker" longitude="122.300293725" latitude="35.864465362" radius="30">
+      THE BOAT
+    </leaflet-circle>
+  </leaflet-map>
+</div>
+</div>
+</div>
+<script>
+  var socket = io();
+  socket.on('TPV', function (data) {
+    var boatmarker = document.getElementById("boatmarker");
+    var map = document.getElementById("mainmap");
+    map.setAttribute("longitude",data.lon);
+    map.setAttribute("latitude",data.lat);
+    boatmarker.setAttribute("longitude",data.lon);
+    boatmarker.setAttribute("latitude",data.lat);
+    boatmarker.setAttribute("radius",Math.max(data.epx,data.epy)); //error in radiur or diamter?
+
+    console.log(data);
+  });
+  socket.on('welcome', function(data){
+    console.log("got welcome data");
+  });
+</script>
+<body>
+</html>
